@@ -5,12 +5,13 @@ export default function Footer() {
   return (
     <View
       style={{
-        marginTop: 40,
-        marginBottom: 60,
+        marginTop: 20,
+        marginBottom: 0,
         alignItems: "center",
         borderTopWidth: 1,
         borderTopColor: "#262626",
         paddingTop: 20,
+        paddingBottom: 12,
       }}
     >
       <Text style={{ color: "#eab308", fontWeight: "bold", fontSize: 16 }}>

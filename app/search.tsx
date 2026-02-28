@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,13 +13,22 @@ import { XIcon } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { searchMovies, image500 } from "../api/tmdb";
 import { styles } from "../styles/index_style";
+import { useAuth } from "../context/AuthContext";
 
 const { width } = Dimensions.get("window");
 
 export default function SearchScreen() {
   const router = useRouter();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isAuthenticated, authLoading]);
 
   const handleSearch = async (value: string) => {
     if (value && value.length > 2) {

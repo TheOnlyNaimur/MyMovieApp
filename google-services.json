@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "803323996354",
+    "project_id": "movies-cabe1",
+    "storage_bucket": "movies-cabe1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803323996354:android:a0a4324dff1801f3e9f35b",
+        "android_client_info": {
+          "package_name": "com.naimur.movies"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdehAqad_IALxTrCj9DJWh4KLGXquckSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
