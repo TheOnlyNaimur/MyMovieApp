@@ -10,19 +10,19 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { styles } from "../../styles/index_style";
 import {
-  fetchMovieDetails,
-  fetchMovieCredits,
-  fetchSimilarMovies,
-  fetchMovieVideos,
+  fetchTVShowDetails,
+  fetchTVShowCredits,
+  fetchSimilarTVShows,
+  fetchTVShowVideos,
   image500,
 } from "../../api/tmdb";
-import MovieRow from "../../src/components/MovieRow";
+import TVShowRow from "../../src/components/TVShowRow";
 import Footer from "../../src/components/Footer";
 
-export default function MovieDetails() {
-  const { id } = useLocalSearchParams(); // Captures the ID from the URL
+export default function TVShowDetails() {
+  const { id } = useLocalSearchParams();
   const router = useRouter();
-  const [movie, setMovie] = useState<any>(null);
+  const [tvShow, setTVShow] = useState<any>(null);
   const [cast, setCast] = useState([]);
   const [similar, setSimilar] = useState([]);
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
@@ -31,17 +31,17 @@ export default function MovieDetails() {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const movieId = Array.isArray(id) ? id[0] : (id as string);
-        const [details, credits, similarMovies, videos] = await Promise.all([
-          fetchMovieDetails(movieId),
-          fetchMovieCredits(movieId),
-          fetchSimilarMovies(movieId),
-          fetchMovieVideos(movieId),
+        const showId = Array.isArray(id) ? id[0] : (id as string);
+        const [details, credits, similarShows, videos] = await Promise.all([
+          fetchTVShowDetails(showId),
+          fetchTVShowCredits(showId),
+          fetchSimilarTVShows(showId),
+          fetchTVShowVideos(showId),
         ]);
 
-        setMovie(details);
+        setTVShow(details);
         setCast(credits.cast || []);
-        setSimilar(similarMovies.results || []);
+        setSimilar(similarShows.results || []);
 
         // Find YouTube trailer
         const youtubeTrailer = videos.results?.find(
@@ -55,7 +55,7 @@ export default function MovieDetails() {
           );
         }
       } catch (error) {
-        console.error("Error fetching movie details:", error);
+        console.error("Error fetching TV show details:", error);
       } finally {
         setLoading(false);
       }
@@ -80,16 +80,16 @@ export default function MovieDetails() {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Movie Poster Background */}
-        {movie?.poster_path && (
+        {/* TV Show Poster Background */}
+        {tvShow?.poster_path && (
           <View>
             <Image
-              source={{ uri: image500(movie.poster_path) || "" }}
+              source={{ uri: image500(tvShow.poster_path) || "" }}
               style={{ width: "100%", height: 550 }}
             />
           </View>
         )}
-        {!movie?.poster_path && (
+        {!tvShow?.poster_path && (
           <View
             style={{
               width: "100%",
@@ -105,7 +105,7 @@ export default function MovieDetails() {
           </View>
         )}
 
-        {/* Movie Info Section */}
+        {/* TV Show Info Section */}
         <View
           style={{
             padding: 20,
@@ -123,10 +123,10 @@ export default function MovieDetails() {
               textAlign: "center",
             }}
           >
-            {movie?.title}
+            {tvShow?.name}
           </Text>
 
-          {/* Status, Release, Runtime */}
+          {/* Status, First Air Date, Seasons */}
           <Text
             style={{
               color: "#A3A3A3",
@@ -135,8 +135,9 @@ export default function MovieDetails() {
               fontWeight: "600",
             }}
           >
-            {movie?.status} • {movie?.release_date?.split("-")[0]} •{" "}
-            {movie?.runtime} min
+            {tvShow?.status} • {tvShow?.first_air_date?.split("-")[0]} •{" "}
+            {tvShow?.number_of_seasons}{" "}
+            {tvShow?.number_of_seasons === 1 ? "Season" : "Seasons"}
           </Text>
 
           {/* Watch Trailer Button */}
@@ -167,8 +168,21 @@ export default function MovieDetails() {
 
           {/* Description */}
           <Text style={{ color: "#D4D4D4", marginTop: 20, lineHeight: 24 }}>
-            {movie?.overview}
+            {tvShow?.overview}
           </Text>
+
+          {/* Episode Runtime if available */}
+          {tvShow?.episode_run_time && tvShow?.episode_run_time.length > 0 && (
+            <Text
+              style={{
+                color: "#A3A3A3",
+                marginTop: 12,
+                fontSize: 14,
+              }}
+            >
+              Episode Runtime: ~{tvShow.episode_run_time[0]} min
+            </Text>
+          )}
         </View>
 
         {/* Cast Section */}
@@ -200,10 +214,10 @@ export default function MovieDetails() {
           </ScrollView>
         </View>
 
-        {/* Similar Movies Section */}
+        {/* Similar TV Shows Section */}
         {similar.length > 0 && (
           <View style={{ paddingHorizontal: 16, paddingBottom: 40 }}>
-            <MovieRow title="Similar Movies" data={similar} />
+            <TVShowRow title="Similar TV Shows" data={similar} />
           </View>
         )}
 

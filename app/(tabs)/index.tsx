@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
-import { styles } from "../styles/index_style";
+import { styles } from "../../styles/index_style";
 // app/index.tsx
 import {
   fetchTrendingMovies,
@@ -13,12 +13,12 @@ import {
   fetchAsianMovies,
   fetchAnimatedMovies,
   fetchBanglaMovies,
-} from "../api/tmdb";
-import TrendingCarousel from "../src/components/TrendingCarousel";
-import MovieRow from "../src/components/MovieRow";
-import ActorRow from "../src/components/ActorRow";
-import Navbar from "../src/components/Navbar";
-import Footer from "../src/components/Footer";
+} from "../../api/tmdb";
+import TrendingCarousel from "../../src/components/TrendingCarousel";
+import MovieRow from "../../src/components/MovieRow";
+import ActorRow from "../../src/components/ActorRow";
+import Navbar from "../../src/components/Navbar";
+import Footer from "../../src/components/Footer";
 
 export default function HomeScreen() {
   const [trending, setTrending] = useState([]);

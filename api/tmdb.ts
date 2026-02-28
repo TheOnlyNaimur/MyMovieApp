@@ -48,6 +48,9 @@ export const fetchMovieCredits = (id: string) =>
 export const fetchSimilarMovies = (id: string) =>
   apiCall(`/movie/${id}/similar`);
 
+// Fetch movie videos/trailers
+export const fetchMovieVideos = (id: string) => apiCall(`/movie/${id}/videos`);
+
 // Add these to src/api/tmdb.ts
 
 export const fetchPopularMovies = () => apiCall("/movie/popular");
@@ -119,3 +122,162 @@ export const fetchBanglaMovies = () =>
     with_original_language: "bn", // Bengali language
     "vote_average.gte": "6",
   });
+
+// ============================================
+// TV SHOWS API ENDPOINTS
+// ============================================
+
+// Trending TV Shows
+export const fetchTrendingTVShows = () => apiCall("/trending/tv/day");
+
+// Upcoming TV Shows (Airing Today)
+export const fetchUpcomingTVShows = () => apiCall("/tv/airing_today");
+
+// Top Rated TV Shows
+export const fetchTopRatedTVShows = () => apiCall("/tv/top_rated");
+
+// Popular TV Shows
+export const fetchPopularTVShows = () => apiCall("/tv/popular");
+
+// TV Show Details
+export const fetchTVShowDetails = (id: string) => apiCall(`/tv/${id}`);
+
+// TV Show Credits (Cast & Crew)
+export const fetchTVShowCredits = (id: string) => apiCall(`/tv/${id}/credits`);
+
+// Similar TV Shows
+export const fetchSimilarTVShows = (id: string) => apiCall(`/tv/${id}/similar`);
+
+// Fetch TV show videos/trailers
+export const fetchTVShowVideos = (id: string) => apiCall(`/tv/${id}/videos`);
+
+// Regional TV Shows
+
+// Indian TV Shows (Hindi)
+export const fetchIndianTVShows = () =>
+  apiCall("/discover/tv", {
+    sort_by: "popularity.desc",
+    with_original_language: "hi",
+    "vote_average.gte": "6",
+  });
+
+// Korean Dramas (K-Drama)
+export const fetchKDramas = () =>
+  apiCall("/discover/tv", {
+    sort_by: "popularity.desc",
+    with_original_language: "ko",
+    "vote_average.gte": "7",
+  });
+
+// Bengali Dramas
+export const fetchBengaliDramas = () =>
+  apiCall("/discover/tv", {
+    sort_by: "popularity.desc",
+    with_original_language: "bn",
+    "vote_average.gte": "6",
+  });
+
+// Fetch TV Drama Actors/Actresses
+// This aggregates cast from popular TV shows to show actors known for TV/Drama
+export const fetchTVActors = async () => {
+  try {
+    // Fetch popular TV shows
+    const popularShows = await apiCall("/tv/popular", { page: "1" });
+
+    if (!popularShows.results || popularShows.results.length === 0) {
+      return { results: [] };
+    }
+
+    // Get cast from the first 5 popular shows
+    const castPromises = popularShows.results
+      .slice(0, 5)
+      .map((show: any) => apiCall(`/tv/${show.id}/credits`));
+
+    const castsData = await Promise.all(castPromises);
+
+    // Aggregate all actors and remove duplicates
+    const actorsMap = new Map();
+
+    castsData.forEach((credits: any) => {
+      if (credits.cast) {
+        credits.cast.slice(0, 10).forEach((actor: any) => {
+          // Use actor ID to prevent duplicates
+          if (!actorsMap.has(actor.id) && actor.profile_path) {
+            actorsMap.set(actor.id, {
+              id: actor.id,
+              name: actor.name,
+              profile_path: actor.profile_path,
+              character: actor.character,
+              known_for_department: "Acting",
+            });
+          }
+        });
+      }
+    });
+
+    // Convert map to array and limit to 20 actors
+    const uniqueActors = Array.from(actorsMap.values()).slice(0, 20);
+
+    return { results: uniqueActors };
+  } catch (error) {
+    console.error("Error fetching TV actors:", error);
+    return { results: [] };
+  }
+};
+
+// ============================================
+// ANIME API ENDPOINTS
+// ============================================
+
+// Trending Anime (Japanese animation content)
+export const fetchTrendingAnime = () =>
+  apiCall("/discover/tv", {
+    sort_by: "popularity.desc",
+    with_genres: "16", // Animation genre
+    with_original_language: "ja", // Japanese
+    "vote_count.gte": "100",
+  });
+
+// Top Rated Anime (Highest rated first)
+export const fetchTopRatedAnime = () =>
+  apiCall("/discover/tv", {
+    sort_by: "vote_average.desc",
+    with_genres: "16",
+    with_original_language: "ja",
+    "vote_count.gte": "200",
+    "vote_average.gte": "7",
+  });
+
+// This Season Anime (Currently airing/new releases)
+export const fetchThisSeasonAnime = () => {
+  const currentYear = new Date().getFullYear();
+  return apiCall("/discover/tv", {
+    sort_by: "first_air_date.desc",
+    with_genres: "16",
+    with_original_language: "ja",
+    "first_air_date.gte": `${currentYear}-01-01`,
+    "vote_count.gte": "10",
+  });
+};
+
+// All Time Favourite Anime (Most popular of all time)
+export const fetchAllTimeFavouriteAnime = () =>
+  apiCall("/discover/tv", {
+    sort_by: "popularity.desc",
+    with_genres: "16",
+    with_original_language: "ja",
+    "vote_count.gte": "500",
+    "vote_average.gte": "7.5",
+  });
+
+// Anime Details (using TV show endpoint since anime are categorized as TV)
+export const fetchAnimeDetails = (id: string) => apiCall(`/tv/${id}`);
+
+// Anime Credits (Cast & Crew)
+export const fetchAnimeCredits = (id: string) => apiCall(`/tv/${id}/credits`);
+
+// Similar Anime
+export const fetchSimilarAnime = (id: string) => apiCall(`/tv/${id}/similar`);
+
+// Fetch anime videos/trailers
+export const fetchAnimeVideos = (id: string) => apiCall(`/tv/${id}/videos`);

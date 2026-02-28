@@ -2,7 +2,6 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
@@ -16,8 +15,19 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: "#171717" }, // Global dark background (neutral-900)
         }}
       >
-        {/* Our main entry point */}
-        <Stack.Screen name="index" /> 
+        {/* Tab navigation group */}
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+        {/* Detail pages that open on top of tabs */}
+        <Stack.Screen name="search" options={{ headerShown: false }} />
+        <Stack.Screen name="movie/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="tv/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="adult-movie/[id]"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="person/[id]" options={{ headerShown: false }} />
       </Stack>
     </SafeAreaProvider>
   );
